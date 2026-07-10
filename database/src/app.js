@@ -11,15 +11,15 @@ app.use(express.json());
 
 app.post("/notes", async (req, res) => {
 
-    const { name, discription } = req.body;
+    const { name, description } = req.body;
 
     const data = await notesSchema.create({
         name,
-        discription
+        description
     })
 
     res.status(201).json({
-        message: "Note created succesfully",
+        message: "Note created successfully",
         data: data
     })
 })
@@ -31,29 +31,36 @@ app.get("/notes", async (req, res) => {
 
     res.status(200)
         .json({
-            message: "Your data",
+            message: "Get Your data successfully",
             notes: data
         })
 })
 
 //DELETE /notes/:index
 
-app.delete("/notes/:id", (req, res) => {
-    delete notes[req.params.id]
+app.delete("/notes/:id", async (req, res) => {
+
+    const id = req.params.id
+
+    await notesSchema.findOneAndDelete(id)
 
     res.status(204)
         .json({
-            message: "note deleted succesfully"
+            message: "note deleted successfully"
         })
 })
 
 // PATCH /notes:index
 
-app.patch("/notes/:index", (req, res) => {
-    notes[req.params.index].decrs = req.body.dec
+app.patch("/notes/:index", async (req, res) => {
+
+    const id = req.params.id
+    const { description } = req.body
+
+    await notesSchema.findOneAndUpdate(id, {description})
 
     res.status(200).json({
-        message: "change the dec"
+        message: "Updated successfully"
     })
 })
 
