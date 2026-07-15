@@ -1,8 +1,14 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const notesSchema = require("./module/notes.module")
+const cors = require("cors")
+const morgan = require('morgan')
 
 const app = express();
+app.use(morgan('tiny'))
+app.use(cors({
+    origin: "http://localhost:5173"
+}));
 
 app.use(express.json());
 
@@ -27,6 +33,8 @@ app.post("/notes", async (req, res) => {
 //GET / notes
 app.get("/notes", async (req, res) => {
 
+    console.log(res)
+
     const data = await notesSchema.find();
 
     res.status(200)
@@ -42,7 +50,7 @@ app.delete("/notes/:id", async (req, res) => {
 
     const id = req.params.id
 
-    await notesSchema.findOneAndDelete(id)
+    await notesSchema.findByIdAndDelete(id)
 
     res.status(204)
         .json({
@@ -57,7 +65,7 @@ app.patch("/notes/:index", async (req, res) => {
     const id = req.params.id
     const { description } = req.body
 
-    await notesSchema.findOneAndUpdate(id, {description})
+    await notesSchema.findByIdAndUpdate(id, { description })
 
     res.status(200).json({
         message: "Updated successfully"
