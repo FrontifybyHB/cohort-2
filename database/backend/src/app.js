@@ -60,17 +60,24 @@ app.delete("/notes/:id", async (req, res) => {
 
 // PATCH /notes:index
 
-app.patch("/notes/:index", async (req, res) => {
+app.patch("/notes/:id", async (req, res) => {
+    const { id } = req.params;
+    const { description } = req.body;
 
-    const id = req.params.id
-    const { description } = req.body
-
-    await notesSchema.findByIdAndUpdate(id, { description })
+    const data = await notesSchema.findByIdAndUpdate(
+        id,
+        { description },
+        {
+            returnDocument: "after",
+            runValidators: true,
+        }
+    );
 
     res.status(200).json({
-        message: "Updated successfully"
-    })
-})
+        message: "Updated successfully",
+        data,
+    });
+});
 
 
 module.exports = app

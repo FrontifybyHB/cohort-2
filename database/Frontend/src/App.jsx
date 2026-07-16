@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 const App = () => {
   const [notes, setNotes] = useState([])
+  const [editNote, setEditNote] = useState(null);
+  const [onEdit, setOnEdit] = useState(false)
+
 
   const getData = () => {
     axios.get("http://localhost:4000/notes")
@@ -23,7 +26,40 @@ const App = () => {
       name: name.value,
       description: description.value
     }).then(res => {
-        console.log(res)
+      console.log(res)
+
+      getData()
+    })
+  }
+
+  const handleDelete = (noteId) => {
+
+    axios.delete(`http://localhost:4000/notes/${noteId}`)
+      .then((res) => {
+        console.log(res.data)
+
+        getData()
+      })
+  }
+
+  const handleEdit = (note) => {
+    setEditNote(note);
+    setOnEdit(true);
+  };
+
+  const handleEditSubmit = (e) => {
+
+    e.preventDefault()
+
+    console.log(editNote._id)
+
+    let noteId = editNote?._id
+    axios.patch(`http://localhost:4000/notes/${noteId}`, {
+      description: editNote?.description
+    }).then((res) => {
+      console.log(res.data)
+
+      getData()
     })
 
 
@@ -33,8 +69,8 @@ const App = () => {
   return (
     <>
       <form className='input-form' onSubmit={handleSubmit}>
-        <input name="name" type="text" placeholder='Enter the name' />
-        <input name="description" type="text" placeholder='Enter the description' />
+        <input id='name' name="name" type="text" placeholder='Enter the name' />
+        <input id='description' name="description" type="text" placeholder='Enter the description' />
         <input type="submit" />
       </form>
 
@@ -44,10 +80,29 @@ const App = () => {
             return <div className='note' key={idx}>
               <h2>{note.name}</h2>
               <h4>{note.description}</h4>
+              <button onClick={() => {
+                handleEdit(note)
+              }}>Edit</button>
+              <button onClick={() => handleDelete(note._id)}>Delete</button>
             </div>
           })
         }
       </section>
+
+      {
+        onEdit && <form className='input-form' onSubmit={(e)=> handleEditSubmit(e)}>
+          <input value={editNote?.name || ""}
+            onChange={(e) => {
+              setEditNote({ ...editNote, name: e.target.value })
+            }}
+            type="text" placeholder='Enter the name' />
+          <input value={editNote?.description || ""}
+            onChange={(e) => {
+              setEditNote({ ...editNote, description: e.target.value })
+            }} type="text" placeholder='Enter the description' />
+          <input type="submit" />
+        </form>
+      }
 
     </>
   )
