@@ -7,7 +7,7 @@ const App = () => {
 
 
   const getData = () => {
-    axios.get("http://localhost:4000/notes")
+    axios.get("https://cohort-2-b2au.onrender.com/notes")
       .then(res => {
         setNotes(res?.data?.notes)
       })
@@ -22,7 +22,7 @@ const App = () => {
 
     const { name, description } = e.target.elements;
 
-    axios.post("http://localhost:4000/notes", {
+    axios.post("https://cohort-2-b2au.onrender.com/notes", {
       name: name.value,
       description: description.value
     }).then(res => {
@@ -34,7 +34,7 @@ const App = () => {
 
   const handleDelete = (noteId) => {
 
-    axios.delete(`http://localhost:4000/notes/${noteId}`)
+    axios.delete(`https://cohort-2-b2au.onrender.com/notes/${noteId}`)
       .then((res) => {
         console.log(res.data)
 
@@ -54,7 +54,7 @@ const App = () => {
     console.log(editNote._id)
 
     let noteId = editNote?._id
-    axios.patch(`http://localhost:4000/notes/${noteId}`, {
+    axios.patch(`https://cohort-2-b2au.onrender.com/notes/${noteId}`, {
       description: editNote?.description
     }).then((res) => {
       console.log(res.data)
