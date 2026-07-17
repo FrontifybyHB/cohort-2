@@ -1,8 +1,9 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const notesSchema = require("./module/notes.module")
-const cors = require("cors")
-const morgan = require('morgan')
+const notesSchema = require("./module/notes.module");
+const cors = require("cors");
+const morgan = require('morgan');
+const path = require("path")
 
 const app = express();
 app.use(morgan('tiny'))
@@ -11,6 +12,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(express.static("public"));
 
 
 // POST /notes
@@ -78,6 +80,11 @@ app.patch("/notes/:id", async (req, res) => {
         data,
     });
 });
+
+
+app.use("*name", (req, res) => {
+    res.sendFile(path(__dirname + ".." + "/pubilc/index.html"))
+})
 
 
 module.exports = app
